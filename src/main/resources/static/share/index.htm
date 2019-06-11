@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SpringMvcECommerce</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Подключение готовых стилей Google -->
+    <link rel="stylesheet" href="resources/css/materialize.min.css" />
+    <!-- Подключение дополнительных собственных стилей -->
+    <link rel="stylesheet" href="resources/css/custom.css" />
+</head>
+<body>
+    <!-- Preloader / Заставка перед загрузкой (разноцветный вариант) -->
+    <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-red">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-yellow">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-green">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Desktop navbar / Меню для настольных ПК -->
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#!home" class="brand-logo">Demo Ventures</a>
+            <a href="#!" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="#!home">Home</a></li>
+                <li><a href="#!shopping">Shopping</a></li>
+                <li><a href="#!signup">Signup</a></li>
+                <li><a href="#!home:out">Signout</a></li>
+                <li><a href="#!signin">Signin</a></li>
+                <li><a href="#modal" class="modal-trigger cart"><i class="material-icons">shopping_cart</i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Mobile navbar / Мобильное меню -->
+    <ul class="sidenav" id="mobile-demo">
+        <li><a href="#!home">Home</a></li>
+        <li><a href="#!shopping">Shopping</a></li>
+        <li><a href="#!signup">Signup</a></li>
+        <li><a href="#!home:out">Signout</a></li>
+        <li><a href="#!signin">Signin</a></li>
+        <li><a href="#modal" class="modal-trigger cart"><i class="material-icons">shopping_cart</i></a></li>
+    </ul>
+    
+    <!-- Sections / Секции для разметки разделов сайта -->
+    <section id="home" class="active" data-src="home"></section>
+    <section id="shopping" data-src="shopping"></section>
+    <section id="signup" data-src="signup"></section>
+    <section id="signin" data-src="signin"></section>
+    <section id="admin" data-src="admin/dashboard"></section>
+    <section id="adminunit" data-src="admin/adminunit"></section>
+    
+    <!-- Hidden popup window / Скрытое всплывающее окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <!-- Content Placeholder / Место для динамического добавления контента на клиенте -->
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Ok</a>
+        </div>
+    </div>
+    
+    <!-- Библиотека для упрощения работы с DOM и AJAX -->
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
+    <!-- Библиотека для установки функции-обработчика событий
+    изменения хэш-составляющей в адресной строке -->
+    <script src="resources/js/jquery-hashchange.js"></script>
+    <!-- Библиотека простейшего шаблонизатора для клиентской стороны приложения -->
+    <script src="resources/js/hogan-3.0.2.min.js"></script>
+    <!-- Библиотека компонент в стиле Material Design -->
+    <script src="resources/js/materialize.min.js"></script>
+    <!-- Библиотека масштабирования изображения на клиентской стороне -->
+    <script src="resources/js/ImageTools.js"></script>
+    <!-- Сценарий оптимальной навигации по одностраничному приложению -->
+    <script src="resources/js/app.js"></script>
+    <!-- Собственные общие сценарии -->
+    <script src="resources/js/custom.js"></script>
+</body>
+</html>
