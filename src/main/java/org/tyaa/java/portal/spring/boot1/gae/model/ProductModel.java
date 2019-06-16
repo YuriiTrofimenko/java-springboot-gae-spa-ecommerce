@@ -7,7 +7,10 @@ package org.tyaa.java.portal.spring.boot1.gae.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.math.BigDecimal;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
@@ -15,21 +18,46 @@ import lombok.NoArgsConstructor;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
+@NoArgsConstructor @Getter @Setter
 public class ProductModel {
     
-    public Long id;
-    public String name;
-    public CategoryModel category;
+    private Long id;
+    private String title;
+    private String description;
+    private BigDecimal price;
+    private int quantity;
+    private String image;
+    // Choose:
+    // - category id for POST
+    private Long categoryId;
+    // - or category model for GET
+    private CategoryModel category;
 
-    public ProductModel(String name, CategoryModel category) {
-        this.name = name;
+    public ProductModel(String title, String description, BigDecimal price, int quantity, String image, Long categoryId) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.image = image;
+        this.categoryId = categoryId;
+    }
+    
+    public ProductModel(String title, String description, BigDecimal price, int quantity, String image, CategoryModel category) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.image = image;
         this.category = category;
     }
-
-    public ProductModel(Long id, String name, CategoryModel category) {
-        this.id = id;
-        this.name = name;
+    
+    public ProductModel(Long id, String title, String description, BigDecimal price, int quantity, String image, CategoryModel category) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.image = image;
         this.category = category;
+        this.id = id;
     }
 }

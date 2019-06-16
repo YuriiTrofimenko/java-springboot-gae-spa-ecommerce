@@ -26,7 +26,19 @@ public class ErrorsGetter {
             }
         } else {
 
-            errorString = _ex.getMessage();
+            Integer lineNumber = 0;
+            String className = "";
+            try {
+                lineNumber = _ex.getStackTrace()[0].getLineNumber();
+                className = _ex.getStackTrace()[0].getClassName();
+            } catch (Exception ex) {
+                try {
+                    lineNumber = _ex.getCause().getStackTrace()[0].getLineNumber();
+                    className = _ex.getCause().getStackTrace()[0].getClassName();
+                } catch (Exception e) {
+                }
+            }
+            errorString = _ex.getMessage() + "line: " + lineNumber + "; class: " + className;
         }
         return errorString;
     }

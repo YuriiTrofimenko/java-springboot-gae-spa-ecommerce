@@ -5,6 +5,7 @@
  */
 package org.tyaa.java.portal.spring.boot1.gae.controller;
 
+import javax.servlet.http.HttpSession;
 import org.tyaa.java.portal.spring.boot1.gae.model.JsonHttpResponse;
 import org.tyaa.java.portal.spring.boot1.gae.model.UserModel;
 import org.tyaa.java.portal.spring.boot1.gae.service.AuthService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.tyaa.java.portal.spring.boot1.gae.model.Cart;
 
 /**
  *
@@ -73,9 +75,18 @@ public class UserController {
     }
     
     @GetMapping("/onsignout")
-    public JsonHttpResponse onsignout() {
+    public JsonHttpResponse onsignout(HttpSession httpSession) {
             // httpSession.removeAttribute("ACCOUNT_INFO");
-            // httpSession.removeAttribute("CART");
+            Cart cart = (Cart) httpSession.getAttribute("CART");
+            if (cart == null) {
+                httpSession.removeAttribute("CART");
+            }
             return authService.onSignOut();
+    }
+    
+    @GetMapping("/onerror")
+    public JsonHttpResponse onerror() {
+            
+            return authService.onError();
     }
 }

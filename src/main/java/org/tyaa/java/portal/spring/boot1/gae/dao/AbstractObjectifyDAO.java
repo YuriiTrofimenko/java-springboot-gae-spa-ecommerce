@@ -13,11 +13,11 @@ import java.util.List;
  *
  
  */
-public abstract class AbstractDAO<T> {
+public abstract class AbstractObjectifyDAO<T> {
     
     private Class<T> entityType;
 
-    public AbstractDAO() {
+    public AbstractObjectifyDAO() {
         
         entityType =
             ((Class<T>) ((ParameterizedType) getClass()

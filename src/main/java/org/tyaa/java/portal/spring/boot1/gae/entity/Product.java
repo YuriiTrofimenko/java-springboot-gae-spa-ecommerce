@@ -22,25 +22,37 @@ public class Product implements Serializable {
     @Id
     private Long id;
     @Index
-    private String name;
+    private String title;
+    private String description;
+    @Index
+    private Double price;
+    @Index
+    private int quantity;
+    private String image;
     @Load
     @Index
     Ref<Category> category;
 
-    public Product(String name, Category category) {
-        this.name = name;
+    public Product(String title, String description, Double price, int quantity, String image, Category category) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.image = image;
         setCategory(category);
     }
 
-    public Product(Long id, String name, Category category) {
+    public Product(Long id, String title, String description, Double price, int quantity, String image, Category category) {
         this.id = id;
-        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.image = image;
         setCategory(category);
     }
-
-    public Product(String name, Product product) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
+    
 
     // @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public final Category getCategory() {

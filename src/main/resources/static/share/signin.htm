@@ -60,12 +60,22 @@
                         $.get("/api/user/check")
                             .done(function (resp) {
 
-                                if (resp !== undefined && resp.status === 'success') {
+                                if (resp) {
 
-                                    if (resp.data !== undefined) {
-                                        $('#signin-form')[0].reset();
-                                        onSignIn(resp.data);
-                                        window.location = "#!home"; 
+                                    if (resp.status === 'success') {
+                                        if (resp.data !== undefined) {
+                                            $('#signin-form')[0].reset();
+                                            onSignIn(resp.data);
+                                            window.location = "#!home"; 
+                                        }
+                                    } else if (resp.status === 'fail') {
+                                        var modalInstance = M.Modal.getInstance($modal);
+                                        $('#modal').find('.modal-content').html("Auth error");
+                                        modalInstance.open();
+                                    } else if (resp.status === 'error') {
+                                        var modalInstance = M.Modal.getInstance($modal);
+                                        $('#modal').find('.modal-content').html("Error: " + resp.message);
+                                        modalInstance.open();
                                     }
                                 }
                             })
@@ -81,8 +91,11 @@
                 }).fail(function (xhr, status, error) {
 
                     //alert("error");
-                    var err = eval("(" + xhr.responseText + ")");
-                    alert(err.Message);
+                    // var err = eval("(" + xhr.responseText + ")");
+                    // alert(err.Message);
+                    var modalInstance = M.Modal.getInstance($modal);
+                    $('#modal').find('.modal-content').html("Error: " + error);
+                    modalInstance.open();
                 });
             });
             setTimeout(preloaderHide, 500);

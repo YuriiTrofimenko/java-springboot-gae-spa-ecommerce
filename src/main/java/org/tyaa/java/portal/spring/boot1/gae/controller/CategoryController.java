@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tyaa.java.portal.spring.boot1.gae.model.CategoryModel;
+import org.tyaa.java.portal.spring.boot1.gae.service.ProductService;
 
 /**
  *
@@ -21,18 +22,18 @@ import org.tyaa.java.portal.spring.boot1.gae.model.CategoryModel;
 public class CategoryController {
     
     @Autowired
-    private AuthService authService;
+    private ProductService productService;
 
     @GetMapping("")
     public JsonHttpResponse getAll() {
     
-        return authService.readCategory();
+        return productService.readCategory();
     }
 
     @GetMapping(value = "/{id}")
     public JsonHttpResponse get(@PathVariable("id") Long _id) throws Exception {
         
-        return authService.readCategory(_id);
+        return productService.readCategory(_id);
     }
     
     /*@GetMapping(value = "/get-by-name/{name}")
@@ -43,7 +44,7 @@ public class CategoryController {
     
     @PostMapping("/create")
     public JsonHttpResponse create(@RequestBody CategoryModel _category) {
-        return authService.createCategory(_category);
+        return productService.createCategory(_category);
     }
     
     /*@PostMapping("/update")
@@ -54,6 +55,6 @@ public class CategoryController {
     @DeleteMapping(value = "/delete/{id}")
     public JsonHttpResponse delete(@PathVariable("id") Long _id) {
         
-        return authService.deleteCategory(_id);
+        return productService.deleteCategory(_id);
     }
 }

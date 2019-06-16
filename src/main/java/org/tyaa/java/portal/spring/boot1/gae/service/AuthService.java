@@ -3,8 +3,8 @@ package org.tyaa.java.portal.spring.boot1.gae.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tyaa.java.portal.spring.boot1.gae.dao.RoleHibernateDAO;
-import org.tyaa.java.portal.spring.boot1.gae.dao.UserHibernateDAO;
+import org.tyaa.java.portal.spring.boot1.gae.dao.RoleObjectifyDAO;
+import org.tyaa.java.portal.spring.boot1.gae.dao.UserObjectifyDAO;
 import org.tyaa.java.portal.spring.boot1.gae.entity.Role;
 import org.tyaa.java.portal.spring.boot1.gae.entity.User;
 import org.tyaa.java.portal.spring.boot1.gae.model.JsonHttpResponse;
@@ -12,28 +12,16 @@ import org.tyaa.java.portal.spring.boot1.gae.model.RoleModel;
 import org.tyaa.java.portal.spring.boot1.gae.model.UserModel;
 import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
-import org.tyaa.java.portal.spring.boot1.gae.dao.CategoryHibernateDAO;
-import org.tyaa.java.portal.spring.boot1.gae.dao.ProductHibernateDAO;
-import org.tyaa.java.portal.spring.boot1.gae.entity.Category;
-import org.tyaa.java.portal.spring.boot1.gae.entity.Product;
-import org.tyaa.java.portal.spring.boot1.gae.model.CategoryModel;
-import org.tyaa.java.portal.spring.boot1.gae.model.ProductModel;
 
 @Service
 public class AuthService {
 
     @Autowired
-    private RoleHibernateDAO roleDAO;
+    private RoleObjectifyDAO roleDAO;
 
     @Autowired
-    private UserHibernateDAO userDAO;
-
-    @Autowired
-    private CategoryHibernateDAO categoryDAO;
-
-    @Autowired
-    private ProductHibernateDAO productDAO;
-
+    private UserObjectifyDAO userDAO;
+    
     public JsonHttpResponse createRole(RoleModel _roleModel) {
 
         Role role = new Role(_roleModel.name);
@@ -61,35 +49,6 @@ public class AuthService {
         return new JsonHttpResponse(
                 JsonHttpResponse.createdStatus,
                  "User '" + _userModel.name + "' created successfully"
-        );
-    }
-
-    public JsonHttpResponse createCategory(CategoryModel _categoryModel) {
-
-        Category category = new Category(_categoryModel.name);
-        categoryDAO.create(category);
-        return new JsonHttpResponse(
-                JsonHttpResponse.createdStatus,
-                 "Category '" + _categoryModel.name + "' created successfully"
-        );
-    }
-
-    // Создание продукта с категорией по умолчанию
-    public JsonHttpResponse createProduct(ProductModel _productModel) throws Exception {
-
-        // Получаем из хранилища объект роли по умолчанию
-        Product product = productDAO.read("product");
-        // Создаем пользователя с заданными именем и паролем и
-        // со ссылкой на объект роли по умолчанию
-        productDAO.create(
-                new Product(
-                        _productModel.name,
-                         product
-                )
-        );
-        return new JsonHttpResponse(
-                JsonHttpResponse.createdStatus,
-                 "User '" + _productModel.name + "' created successfully"
         );
     }
 
@@ -133,45 +92,6 @@ public class AuthService {
         );
     }
 
-    public JsonHttpResponse<List<CategoryModel>> readCategory() {
-
-        List<Category> categorys = categoryDAO.read();
-        List<CategoryModel> categoryModels
-                = categorys.stream()
-                        .map((c) -> {
-                            return new CategoryModel(c.getId(), c.getName());
-                        })
-                        .collect(Collectors.toList());
-        return new JsonHttpResponse(
-                JsonHttpResponse.fetchedStatus,
-                 "The categories list fetched successfully",
-                 categoryModels
-        );
-    }
-    
-     public JsonHttpResponse<List<ProductModel>> readProduct() {
-
-        List<Product> products = productDAO.read();
-        List<ProductModel> productModels
-                = products.stream()
-                        .map((p) -> {
-                            return new ProductModel(
-                                    p.getId(),
-                                     p.getName(),
-                                     new CategoryModel(
-                                            p.getCategory().getId(),
-                                             p.getCategory().getName()
-                                    )
-                            );
-                        })
-                        .collect(Collectors.toList());
-        return new JsonHttpResponse(
-                JsonHttpResponse.fetchedStatus,
-                 "The productss list fetched successfully",
-                 productModels
-        );
-    }
-
     public JsonHttpResponse<RoleModel> readRole(Long _id) throws Exception {
        
         Role role =
@@ -189,26 +109,6 @@ public class AuthService {
                 status
                 , message
                 , roleModel
-        );
-    }
-    
-    public JsonHttpResponse<CategoryModel> readCategory(Long _id) throws Exception {
-       
-        Category category =
-                categoryDAO.read(_id);
-        String status =
-                (category != null && category.getId() != null)
-                ? JsonHttpResponse.fetchedStatus
-                : JsonHttpResponse.warningStatus;
-        String message =
-                (category != null && category.getId() != null)
-                ? "The category fetched successfully"
-                : "Not found";
-        CategoryModel categoryModel = new CategoryModel(category.getId(), category.getName());
-        return new JsonHttpResponse(
-                status
-                , message
-                , categoryModel
         );
     }
       
@@ -242,37 +142,6 @@ public class AuthService {
                  message,
                  userModel
         );
-    }
-
-    public JsonHttpResponse<ProductModel> readProduct(Long _id) throws Exception {
-
-        Product product
-                = productDAO.read(_id);
-        String status
-                = (product != null && product.getId() != null)
-                ? JsonHttpResponse.fetchedStatus
-                : JsonHttpResponse.warningStatus;
-        String message
-                = (product != null && product.getId() != null)
-                ? "The product fetched successfully"
-                : "Not found";
-        ProductModel productModel = null;
-        if (product != null && product.getId() != null) {
-            productModel
-                    = new ProductModel(
-                            product.getId(),
-                             product.getName(),
-                             new CategoryModel(
-                                    product.getCategory().getId(),
-                                     product.getCategory().getName()
-                            )
-                    );
-        }
-        return new JsonHttpResponse(
-                status,
-                 message,
-                 productModel
-        );
     } 
     
     public JsonHttpResponse<UserModel> readUser(String _name) throws Exception {
@@ -304,37 +173,6 @@ public class AuthService {
                 status,
                  message,
                  userModel
-        );
-    }
-
-    public JsonHttpResponse<ProductModel> readProduct(String _name) throws Exception {
-
-        Product product
-                = productDAO.read(_name);
-        String status
-                = (product != null && product.getId() != null)
-                ? JsonHttpResponse.fetchedStatus
-                : JsonHttpResponse.warningStatus;
-        String message
-                = (product != null && product.getId() != null)
-                ? "The user fetched successfully"
-                : "Not found";
-        ProductModel productModel = null;
-        if (product != null && product.getId() != null) {
-            productModel
-                    = new ProductModel(
-                            product.getId(),
-                             product.getName(),
-                             new CategoryModel(
-                                    product.getCategory().getId(),
-                                     product.getCategory().getName()
-                            )
-                    );
-        }
-        return new JsonHttpResponse(
-                status,
-                 message,
-                 productModel
         );
     }
 
@@ -383,24 +221,6 @@ public class AuthService {
         );
     }
 
-    public JsonHttpResponse deleteCategory(Long _id) {
-
-        categoryDAO.delete(_id);
-        return new JsonHttpResponse(
-                JsonHttpResponse.deletedStatus,
-                 "The category deleted successfully"
-        );
-    }
-
-    public JsonHttpResponse deleteProduct(Long _id) {
-
-        productDAO.delete(_id);
-        return new JsonHttpResponse(
-                JsonHttpResponse.deletedStatus,
-                 "The product deleted successfully"
-        );
-    }
-
     public JsonHttpResponse check(Authentication authentication) {
 
         JsonHttpResponse response = new JsonHttpResponse();
@@ -423,6 +243,14 @@ public class AuthService {
                 new JsonHttpResponse();
         response.status = JsonHttpResponse.successStatus;
             response.message = "Signed out";
+        return response;
+    }
+    
+    public JsonHttpResponse onError() {
+        JsonHttpResponse response =
+                new JsonHttpResponse();
+        response.status = JsonHttpResponse.errorStatus;
+            response.message = "Auth error";
         return response;
     }
 

@@ -40,20 +40,24 @@ public class ObjectifyWebAuthProvider implements AuthenticationProvider {
         String name = a.getName();
         String password = a.getCredentials().toString();
 
-        Logger.getLogger(ObjectifyWebAuthProvider.class.getName()).log(Level.SEVERE, null, "my2 - " + name);
-        Logger.getLogger(ObjectifyWebAuthProvider.class.getName()).log(Level.SEVERE, null, "my3 - " + password);
+        // Logger.getLogger(ObjectifyWebAuthProvider.class.getName()).log(Level.SEVERE, null, "my2 - " + name);
+        // Logger.getLogger(ObjectifyWebAuthProvider.class.getName()).log(Level.SEVERE, null, "my3 - " + password);
         UserModel userModel = null;
         try {
             userModel = authService.readUser(name).data;
         } catch (Exception ex) {
             Logger.getLogger(ObjectifyWebAuthProvider.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        if (userModel != null) {
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            Logger.getLogger(ObjectifyWebAuthProvider.class.getName()).log(Level.SEVERE, null, "my - " + userModel.role);
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + userModel.role.name)); // name is a string
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        Logger.getLogger(ObjectifyWebAuthProvider.class.getName()).log(Level.SEVERE, null, "my - " + userModel.role);
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + userModel.role.name)); // name is a string
-
-        return new UsernamePasswordAuthenticationToken(name, password, authorities);
+            return new UsernamePasswordAuthenticationToken(name, password, authorities);
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.tyaa.java.portal.spring.boot1.gae.entity.Category;
  * @author yurii
  */
 @Repository
-public class CategoryHibernateDAO extends AbstractDAO<Category> {
+public class CategoryObjectifyDAO extends AbstractObjectifyDAO<Category> {
     
     public Category read(String _name) throws Exception {
             
@@ -38,9 +38,5 @@ public class CategoryHibernateDAO extends AbstractDAO<Category> {
             categoryEntity = finalCategoryEntity;
             
         return categoryEntity;
-    }
-
-    public void create(Category category) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

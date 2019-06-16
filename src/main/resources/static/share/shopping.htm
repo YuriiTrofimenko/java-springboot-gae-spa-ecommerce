@@ -78,7 +78,7 @@
                 //Запрашиваем у контроллера отфильтрованные и отсортированные
                 //товары, передавая ему модель фильтрации
                 $.ajax({
-                    url: 'api/product/get-filtered'
+                    url: 'api/product/filtered'
                     , type: "POST"
                     , data: JSON.stringify(_filterData)
                     , dataType : "json"
@@ -86,7 +86,7 @@
                 }).done(function (resp) {
 
                     var template;
-                    if (resp !== undefined && resp.status === 'success') {
+                    if (resp && resp.status === 'fetched') {
 
                         template = Hogan.compile(
                             '{{#data}}'
@@ -98,7 +98,7 @@
                                     + '</div>'
                                     + '<div class="card-content">'
                                         + '<span class="card-title">'
-                                        + '<div>{{name}} ({{category.name}})</div>'
+                                        + '<div>{{title}} ({{category.name}})</div>'
                                         + '<div>${{price}}</div>'
                                         + '</span>'
                                         + '<p>{{description}}</p>'
@@ -108,6 +108,7 @@
                             + '{{/data}}'
                         );
                         //Заполняем шаблон данными и помещаем на веб-страницу
+                        resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
                         $('#article-grid-container').html(template.render(resp));
                         //Активация всплывающих подсказок
                         $('.tooltipped').tooltip();
@@ -126,7 +127,7 @@
                                     url: "api/product/cart/add/" + productId
                                     , type: 'POST'
                                 }).done(function (resp) {
-                                    if (resp !== undefined && resp.status === 'success') {
+                                    if (resp && resp.status === 'success') {
                                         alert("One item added to Your cart");
                                     } else {
                                         alert("error: " + resp.error);
@@ -167,7 +168,7 @@
                 preloaderShow();
                 //Запрашиваем с сервера список всех категорий
                 $.ajax({
-                    url: 'api/category/get-all',
+                    url: 'api/category',
                     type: "GET",
                     cache: false
                 }).done(function (resp) {
@@ -187,6 +188,7 @@
                                 + '{{/data}}'
                             );
                             //Заполняем шаблон данными и помещаем на веб-страницу
+                            resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
                             $('#shopping-root #categories').html(template.render(resp));
                         }
                     }
@@ -242,13 +244,13 @@
             var showCart = function () {
 
                 $.ajax({
-                    url: "api/product/cart/get-all"
+                    url: "api/product/cart"
                     , type: 'GET'
                     , cache: false
                 }).done(function (resp) {
 
                     var template;
-                    if (resp !== undefined && resp.status === 'success') {
+                    if (resp && resp.status === 'fetched') {
 
                         template = Hogan.compile(
                             '<table class="table">'
@@ -281,6 +283,7 @@
                             + '</table>'
                         );
                         //Заполняем шаблон данными и помещаем на веб-страницу
+                        resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
                         $modal.find('.modal-content').html(template.render(resp));
 
                         $(".plusBtn").unbind("click");
@@ -317,7 +320,7 @@
                                 , type: 'POST'
                             }).done(function (resp) {
 
-                                if (resp !== undefined && resp.status === 'success') {
+                                if (resp && resp.status === 'success') {
 
                                     showCart();
                                 } else {

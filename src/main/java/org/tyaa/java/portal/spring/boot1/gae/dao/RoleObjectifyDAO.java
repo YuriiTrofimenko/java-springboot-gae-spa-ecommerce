@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * @author yurii
  */
 @Repository
-public class RoleHibernateDAO extends AbstractDAO<Role> {
+public class RoleObjectifyDAO extends AbstractObjectifyDAO<Role> {
     
     public Role read(String _name) throws Exception {
             

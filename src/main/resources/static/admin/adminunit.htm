@@ -150,12 +150,12 @@
                         //Асинхронный запрос на сервер для получения
                         //данных о категориях
                         $.ajax({
-                            url: "api/category/get-all"
+                            url: "api/category"
                             , type: 'GET'
                         }).done(function (resp) {
 
                             var template;
-                            if (resp !== undefined && resp.status === 'success') {
+                            if (resp !== undefined && resp.status === 'fetched') {
 
                                 var template = Hogan.compile(
                                     '<table class="table">'
@@ -179,6 +179,7 @@
                                     + '</table>'
                                 );
                                 //Заполняем шаблон данными и помещаем на веб-страницу
+                                resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
                                 $('#categories-container').html(template.render(resp));
 
                                 $("#editCategory, #deleteCategory").attr('disabled', '');
@@ -199,6 +200,7 @@
                                     );
                                 //Заполняем шаблон сообщением об ошибке
                                 //и помещаем на веб-страницу
+                                resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
                                 $('#categories-container').html(template.render(resp));
                             }
                         }).fail(function (xhr, status, error) {
@@ -208,6 +210,7 @@
                                 );
                             //Заполняем шаблон сообщением об ошибке
                             //и помещаем на веб-страницу
+                            resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
                             $('#categories-container').html(template.render(resp));
                         });
                     }
@@ -231,7 +234,7 @@
                             }).done(function (resp) {
 
                                 var template;
-                                if (resp !== undefined && resp.status === 'success') {
+                                if (resp && resp.status === 'created') {
 
                                     populateCategoriesTable();
                                 } else {
@@ -250,8 +253,11 @@
                             });
                         }
                     );
+            
+                    // Обработчик клика по кнопке редактирования выбранной категории
+                    // TODO
 
-                    //
+                    // Обработчик клика по кнопке удаления выбранной категории
                     $("#deleteCategory").unbind("click");
                     $('#deleteCategory').click(function (ev) {
 
@@ -264,7 +270,7 @@
                             , type: 'DELETE'
                         }).done(function (resp) {
 
-                            if (resp !== undefined && resp.status === 'success') {
+                            if (resp && resp.status === 'deleted') {
 
                                 populateCategoriesTable();
                             } else {
@@ -294,11 +300,11 @@
                     var populateProductsTable = function () {
 
                         $.ajax({
-                            url: "api/product/get-all"
+                            url: "api/product"
                             , type: 'GET'
                         }).done(function (resp) {
 
-                            if (resp !== undefined && resp.status === 'success') {
+                            if (resp !== undefined && resp.status === 'fetched') {
 
                             	//console.log(resp);
                                 var template = Hogan.compile(
@@ -316,7 +322,7 @@
                                         + '{{#data}}'
                                         + '<tr>'
                                         + '<th scope="row">{{id}}</th>'
-                                        + '<td>{{name}}</td>'
+                                        + '<td>{{title}}</td>'
                                         + '<td>{{category.name}}</td>'
                                         + '<td>{{price}}</td>'
                                         + '<td>{{quantity}}</td>'
@@ -329,6 +335,7 @@
                                     + '</table>'
                                 );
                                 //Заполняем шаблон данными и помещаем на веб-страницу
+                                resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
                                 $('#products-container').html(template.render(resp));
 
                                 $("#editProduct, #deleteProduct").attr('disabled', '');
@@ -369,13 +376,13 @@
 
                         $.ajax({
                             type: 'GET',
-                            url: 'api/category/get-all',
+                            url: 'api/category',
                             dataType: 'json',
                             cache: false
                         }).done(function (resp, textStatus, jqXHR) {
 
                         	var template;
-                        	if (resp !== undefined && resp.status === 'success') {
+                        	if (resp && resp.status === 'fetched') {
 	                            //Готовим шаблон списка при помощи библиотеки Hogan
 	                            template = Hogan.compile(
 	                                '<select>'
@@ -388,6 +395,7 @@
 	                                + '</select>'
 	                            );
 	                            //Заполняем шаблон данными и помещаем на веб-страницу
+                                    resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
 	                            $('#category-select').html(template.render(resp));
 	                            $('#category-select select').formSelect();
                         	} else {
@@ -467,7 +475,7 @@
                                 , contentType : "application/json"
                             }).done(function (resp) {
 
-                                if (resp !== undefined && resp.status === 'success') {
+                                if (resp !== undefined && resp.status === 'created') {
 
                                     //
                                     populateProductsTable();
@@ -497,7 +505,7 @@
                             , type: 'DELETE'
                         }).done(function (resp) {
 
-                            if (resp !== undefined && resp.status === 'success') {
+                            if (resp !== undefined && resp.status === 'fetched') {
 
                             	populateProductsTable();
                             } else {

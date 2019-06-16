@@ -76,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/user/delete").authenticated()
         .antMatchers("/api/user/check").permitAll()
         .antMatchers("/api/role/**").permitAll()//.hasRole("admin")
-        // .antMatchers("/api/init/**").permitAll()
+        .antMatchers("/api/init/**").permitAll()
        // .antMatchers("/public/**").permitAll()
         .antMatchers("/share/**").permitAll()
         .antMatchers("/admin/**").hasRole("admin")
@@ -84,6 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .formLogin()//.loginPage("/login").permitAll()
         .successHandler(savedReqAwareAuthSuccessHandler)
+        .failureUrl("/api/user/onerror")
         .and()
         .logout()
         //.logoutUrl("/logout");

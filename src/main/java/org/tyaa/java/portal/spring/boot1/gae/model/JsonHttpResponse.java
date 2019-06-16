@@ -24,6 +24,8 @@ public class JsonHttpResponse<T> {
     public static String deletedStatus = "deleted";
     public static String successStatus = "success";
     public static String failStatus = "fail";
+    public static String addedStatus = "added";
+    public static String decreasedStatus = "decreased";
     
     public String status;
     public String message;
