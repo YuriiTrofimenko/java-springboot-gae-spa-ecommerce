@@ -13,6 +13,8 @@ var onSignIn = function (accountInfo) {
 
     $("a[href='#!home:out']").text('Signout (' + accountInfo.name + ')');
     $("a[href='#!home:out']").css('display', 'block');
+    
+    $("a[href='#!feedback']").css('display', 'block');
 
     $("a[href='#!signin']").css('display', 'none');
     $("a[href='#!signup']").css('display', 'none');
@@ -25,6 +27,8 @@ var onSignOut = function () {
 
     $("a[href='#!home:out']").text('');
     $("a[href='#!home:out']").css('display', 'none');
+    
+    $("a[href='#!feedback']").css('display', 'none');
 
     $("a[href='#!signin']").css('display', 'block');
     $("a[href='#!signup']").css('display', 'block');

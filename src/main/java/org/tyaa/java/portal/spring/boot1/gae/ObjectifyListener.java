@@ -16,6 +16,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import org.tyaa.java.portal.spring.boot1.gae.entity.Category;
+import org.tyaa.java.portal.spring.boot1.gae.entity.Feedback;
 import org.tyaa.java.portal.spring.boot1.gae.entity.Product;
 import org.tyaa.java.portal.spring.boot1.gae.utils.ErrorsGetter;
 
@@ -63,6 +64,7 @@ public class ObjectifyListener implements ServletContextListener{
         ObjectifyService.register(Product.class);
         log.info("ObjectifyService.init - 5");
         ObjectifyService.register(Category.class);
+        ObjectifyService.register(Feedback.class);
         
     }
 

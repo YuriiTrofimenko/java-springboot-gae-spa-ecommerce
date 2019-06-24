@@ -1,0 +1,15 @@
+<!-- Home page -->
+<div id="feedback-root"></div>
+<script>
+    app.handler(function (param) {
+
+        return function (param) {
+        	
+            $('#feedback-root').html(
+                    '<h1>FeedBack</h1>'
+                );
+            }
+            setTimeout(preloaderHide, 500);
+        };
+    });
+</script>
