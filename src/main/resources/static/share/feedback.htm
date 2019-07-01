@@ -1,15 +1,92 @@
 <!-- Home page -->
+<div class="valign-wrapper">
+<div class="center-align"><h1>Feedback</h1>
+    <br> <br> <br>
+    <form id="feedback-form" class="col s3">
+
+        <p>
+            <textarea name="Feedback" cols="100" rows="10"></textarea>
+        </p>
+        <br> <br>                             
+        <button class="btn waves-effect waves-light" type="submit" name="action">
+            Send
+            <i class="material-icons right">send</i>
+        </button>
+
+    </form>
+</div>
+</div>
 <div id="feedback-root"></div>
 <script>
     app.handler(function (param) {
 
-        return function (param) {
-        	
-            $('#feedback-root').html(
-                    '<h1>FeedBack</h1>'
-                );
+    return function (param) {
+
+    $('#feedback-root').html('<h1>FeedBack</h1>');
+        // console.log(preloaderHide);
+        
+        //Функция заполнения фильтра по категориям
+            var populateFeedbackList = function () {
+
+                //Добавляем анимацию бесконечного прогресса -
+                //пока будет ожидаться ответ сервера
+                preloaderShow();
+                //Запрашиваем с сервера список всех категорий
+                $.ajax({
+                    url: 'api/feedback',
+                    type: "GET",
+                    cache: false
+                }).done(function (resp) {
+
+                    if (resp !== undefined) {
+                        if (resp.status === 'error') {
+                            alert("error: " + resp.message);
+                        } else {
+
+                            var template = Hogan.compile(
+                                '{{#data}}'
+                                + '<div class="row">'
+                                    + '<div class="col s12">'
+                                        + '<div class="card">'
+                                            + '<div class="card-content">'
+                                                + '<span class="card-title">{{name}}({{datestime}}):</span>'
+                                                + '<p>{{text}}</p>'
+                                            + '</div>'
+                                        + '</div>'
+                                    + '</div>'
+                                + '</div>'
+                                + '{{/data}}'
+                            );
+                            //Заполняем шаблон данными и помещаем на веб-страницу
+                            resp = JSON.parse(decodeURIComponent(JSON.stringify(resp)));
+                            $('#feedback-root').html(template.render(resp));
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                    alert("Ошибка: " + jqXHR);
+                }).always(function () {
+
+                    preloaderHide();
+                });
             }
+
+            populateFeedbackList();
+        
+        /*$('#feedback-form').unbind("submit");
+        $('#feedback-form').submit(function (ev) {
+
+            ev.preventDefault();
+            $.ajax({
+                url: "/create"
+                    //, data: JSON.stringify(formData)
+                    , data: $("#feedback-form").serialize()
+                    , type: 'POST'
+            }).done(function (resp, statusText, xhr){
+                
+            });
             setTimeout(preloaderHide, 500);
-        };
-    });
+    });*/
+}
+});
 </script>

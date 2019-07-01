@@ -50,3 +50,7 @@ section.active {
 .cart{
 	display: none;
 }
+
+#feedback-form > button {
+    font-size: 2.0rem;
+}
