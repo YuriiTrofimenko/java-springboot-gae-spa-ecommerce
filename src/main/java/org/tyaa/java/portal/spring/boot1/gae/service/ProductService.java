@@ -8,13 +8,16 @@ import org.tyaa.java.portal.spring.boot1.gae.model.JsonHttpResponse;
 import java.util.stream.Collectors;
 import org.tyaa.java.portal.spring.boot1.gae.dao.CategoryObjectifyDAO;
 import org.tyaa.java.portal.spring.boot1.gae.dao.ProductObjectifyDAO;
+import org.tyaa.java.portal.spring.boot1.gae.dao.SubscriptionObjectifyDAO;
 import org.tyaa.java.portal.spring.boot1.gae.entity.Category;
 import org.tyaa.java.portal.spring.boot1.gae.entity.Product;
+import org.tyaa.java.portal.spring.boot1.gae.entity.Subscription;
 import org.tyaa.java.portal.spring.boot1.gae.model.Cart;
 import org.tyaa.java.portal.spring.boot1.gae.model.CartItem;
 import org.tyaa.java.portal.spring.boot1.gae.model.CategoryModel;
 import org.tyaa.java.portal.spring.boot1.gae.model.ProductFilter;
 import org.tyaa.java.portal.spring.boot1.gae.model.ProductModel;
+import org.tyaa.java.portal.spring.boot1.gae.utils.Mailer;
 
 @Service
 public class ProductService {
@@ -24,6 +27,9 @@ public class ProductService {
 
     @Autowired
     private ProductObjectifyDAO productDAO;
+    
+    @Autowired
+    private SubscriptionObjectifyDAO subscriptionDAO;
 
     public JsonHttpResponse createCategory(CategoryModel _categoryModel) {
 
@@ -52,6 +58,34 @@ public class ProductService {
                 , category
             )
         );
+        
+        // В базе ищем все объекты подписок,
+        //которые активны,
+        //и каждому подписанному пользователю отправляем письмо
+        //с названием нового товара
+        List<Subscription> subscriptions = subscriptionDAO.readActive();
+        if (subscriptions != null)  {
+            for (Subscription subscription : subscriptions) {
+                /* Sending email */
+            String messageString
+                    = "Admin added a new product: "
+                    + _productModel.getTitle();
+            String subjectString = "New product";
+            String fromEmailString = "gachechega@gmail.com";
+            String fromNameString = "JavaPortal";
+            String toNameString = subscription.getUser().getName();
+            String toEmailString = subscription.getUser().getMail();
+            //try {
+                Mailer.sendPlainMsg(
+                        messageString,
+                         subjectString,
+                         fromEmailString,
+                         fromNameString,
+                         toEmailString,
+                         toNameString);
+            }
+        }
+        
         return new JsonHttpResponse(
             JsonHttpResponse.createdStatus,
              "Product '" + _productModel.getTitle() + "' created successfully"

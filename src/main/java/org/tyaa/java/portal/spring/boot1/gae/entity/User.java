@@ -24,6 +24,7 @@ public class User implements Serializable {
     @Index
     private String name;
     private String password;
+    private String mail;
     @Load
     @Index
     Ref<Role> role;
@@ -31,6 +32,7 @@ public class User implements Serializable {
     public User(String name, String password, Role role) {
         this.name = name;
         this.password = password;
+        this.mail = mail;
         setRole(role);
     }
 
@@ -38,8 +40,20 @@ public class User implements Serializable {
         this.id = id;
         this.name = name;
         this.password = password;
+        this.mail = mail;
         setRole(role);
     }
+    
+   
+    public User(String name, String password, String mail, Role role) {
+        this.name = name;
+        this.password = password;
+        this.mail = mail;
+        setRole(role);
+    }
+
+    public User(String name) {
+        this.name = name;    }
 
     // @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public final Role getRole() {
@@ -65,4 +79,6 @@ public class User implements Serializable {
             }
         });
     }
+    
+    
 }

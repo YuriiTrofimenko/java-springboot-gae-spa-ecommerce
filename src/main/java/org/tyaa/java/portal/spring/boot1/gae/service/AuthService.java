@@ -1,5 +1,6 @@
 package org.tyaa.java.portal.spring.boot1.gae.service;
 
+import static com.google.cloud.Identity.user;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import org.tyaa.java.portal.spring.boot1.gae.model.RoleModel;
 import org.tyaa.java.portal.spring.boot1.gae.model.UserModel;
 import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
+import org.tyaa.java.portal.spring.boot1.gae.dao.SubscriptionObjectifyDAO;
+import org.tyaa.java.portal.spring.boot1.gae.entity.Subscription;
+import org.tyaa.java.portal.spring.boot1.gae.model.SubscriptionModel;
 
 @Service
 public class AuthService {
@@ -21,14 +25,17 @@ public class AuthService {
 
     @Autowired
     private UserObjectifyDAO userDAO;
-    
+
+    @Autowired
+    private SubscriptionObjectifyDAO subscriptionDAO;
+
     public JsonHttpResponse createRole(RoleModel _roleModel) {
 
         Role role = new Role(_roleModel.name);
         roleDAO.create(role);
         return new JsonHttpResponse(
                 JsonHttpResponse.createdStatus,
-                 "Role '" + _roleModel.name + "' created successfully"
+                "Role '" + _roleModel.name + "' created successfully"
         );
     }
 
@@ -39,16 +46,27 @@ public class AuthService {
         Role role = roleDAO.read("user");
         // Создаем пользователя с заданными именем и паролем и
         // со ссылкой на объект роли по умолчанию
-        userDAO.create(
-                new User(
+        User newUser = new User(
                         _userModel.name,
-                         _userModel.password,
-                         role
-                )
-        );
+                        _userModel.password,
+                        _userModel.mail,
+                        role
+                );
+        // Сохраняем в базу объект новый пользователь
+        userDAO.create(newUser);
+        // Проверяем объект модели, который пришел с клиента:
+        //нужно ли подписать данного нового пользователя на
+        //событие добавления нового товара
+        if (_userModel.subscribe) {
+            // Вызываем сохранение объекта подписки в базу
+            subscriptionDAO.create(
+                    new Subscription(newUser)
+            );
+        }
+
         return new JsonHttpResponse(
                 JsonHttpResponse.createdStatus,
-                 "User '" + _userModel.name + "' created successfully"
+                "User '" + _userModel.name + "' created successfully"
         );
     }
 
@@ -63,8 +81,8 @@ public class AuthService {
                         .collect(Collectors.toList());
         return new JsonHttpResponse(
                 JsonHttpResponse.fetchedStatus,
-                 "The roles list fetched successfully",
-                 roleModels
+                "The roles list fetched successfully",
+                roleModels
         );
     }
 
@@ -76,42 +94,43 @@ public class AuthService {
                         .map((u) -> {
                             return new UserModel(
                                     u.getId(),
-                                     u.getName(),
-                                     u.getPassword(),
-                                     new RoleModel(
+                                    u.getName(),
+                                    u.getPassword(),
+                                    u.getMail(),
+                                    new RoleModel(
                                             u.getRole().getId(),
-                                             u.getRole().getName()
+                                            u.getRole().getName()
                                     )
                             );
                         })
                         .collect(Collectors.toList());
         return new JsonHttpResponse(
                 JsonHttpResponse.fetchedStatus,
-                 "The users list fetched successfully",
-                 userModels
+                "The users list fetched successfully",
+                userModels
         );
     }
 
     public JsonHttpResponse<RoleModel> readRole(Long _id) throws Exception {
-       
-        Role role =
-                roleDAO.read(_id);
-        String status =
-                (role != null && role.getId() != null)
+
+        Role role
+                = roleDAO.read(_id);
+        String status
+                = (role != null && role.getId() != null)
                 ? JsonHttpResponse.fetchedStatus
                 : JsonHttpResponse.warningStatus;
-        String message =
-                (role != null && role.getId() != null)
+        String message
+                = (role != null && role.getId() != null)
                 ? "The role fetched successfully"
                 : "Not found";
         RoleModel roleModel = new RoleModel(role.getId(), role.getName());
         return new JsonHttpResponse(
-                status
-                , message
-                , roleModel
+                status,
+                message,
+                roleModel
         );
     }
-      
+
     public JsonHttpResponse<UserModel> readUser(Long _id) throws Exception {
 
         User user
@@ -129,21 +148,22 @@ public class AuthService {
             userModel
                     = new UserModel(
                             user.getId(),
-                             user.getName(),
-                             user.getPassword(),
-                             new RoleModel(
+                            user.getName(),
+                            user.getPassword(),
+                            user.getMail(),
+                            new RoleModel(
                                     user.getRole().getId(),
-                                     user.getRole().getName()
+                                    user.getRole().getName()
                             )
                     );
         }
         return new JsonHttpResponse(
                 status,
-                 message,
-                 userModel
+                message,
+                userModel
         );
-    } 
-    
+    }
+
     public JsonHttpResponse<UserModel> readUser(String _name) throws Exception {
 
         User user
@@ -161,18 +181,19 @@ public class AuthService {
             userModel
                     = new UserModel(
                             user.getId(),
-                             user.getName(),
-                             user.getPassword(),
-                             new RoleModel(
+                            user.getName(),
+                            user.getPassword(),
+                            user.getMail(),
+                            new RoleModel(
                                     user.getRole().getId(),
-                                     user.getRole().getName()
+                                    user.getRole().getName()
                             )
                     );
         }
         return new JsonHttpResponse(
                 status,
-                 message,
-                 userModel
+                message,
+                userModel
         );
     }
 
@@ -208,7 +229,7 @@ public class AuthService {
         roleDAO.delete(_id);
         return new JsonHttpResponse(
                 JsonHttpResponse.deletedStatus,
-                 "The role deleted successfully"
+                "The role deleted successfully"
         );
     }
 
@@ -217,7 +238,7 @@ public class AuthService {
         userDAO.delete(_id);
         return new JsonHttpResponse(
                 JsonHttpResponse.deletedStatus,
-                 "The user deleted successfully"
+                "The user deleted successfully"
         );
     }
 
@@ -239,18 +260,18 @@ public class AuthService {
     }
 
     public JsonHttpResponse onSignOut() {
-        JsonHttpResponse response =
-                new JsonHttpResponse();
+        JsonHttpResponse response
+                = new JsonHttpResponse();
         response.status = JsonHttpResponse.successStatus;
-            response.message = "Signed out";
+        response.message = "Signed out";
         return response;
     }
-    
+
     public JsonHttpResponse onError() {
-        JsonHttpResponse response =
-                new JsonHttpResponse();
+        JsonHttpResponse response
+                = new JsonHttpResponse();
         response.status = JsonHttpResponse.errorStatus;
-            response.message = "Auth error";
+        response.message = "Auth error";
         return response;
     }
 
@@ -260,14 +281,14 @@ public class AuthService {
         Role role = roleDAO.read("admin");
         // 
         User user
-            = userDAO.read(_id);
+                = userDAO.read(_id);
         user.setRole(role);
         // Создаем пользователя с заданными именем и паролем и
         // со ссылкой на объект роли по умолчанию
         userDAO.update(user);
         return new JsonHttpResponse(
                 JsonHttpResponse.updatedStatus,
-                 "Admin '" + user.getName() + "' created successfully"
+                "Admin '" + user.getName() + "' created successfully"
         );
     }
 }

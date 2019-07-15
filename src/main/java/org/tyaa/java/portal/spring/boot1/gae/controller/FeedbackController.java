@@ -5,6 +5,8 @@
  */
 package org.tyaa.java.portal.spring.boot1.gae.controller;
 
+import java.io.UnsupportedEncodingException;
+import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,7 +52,7 @@ public class FeedbackController {
     }*/
     
     @PostMapping("/create")
-    public JsonHttpResponse create(@RequestBody FeedbackModel _feedback, Authentication _authentication) {
+    public JsonHttpResponse create(@RequestBody FeedbackModel _feedback, Authentication _authentication) throws MessagingException, UnsupportedEncodingException {
         return feedbackService.createFeedback(_feedback, _authentication);
     }
     

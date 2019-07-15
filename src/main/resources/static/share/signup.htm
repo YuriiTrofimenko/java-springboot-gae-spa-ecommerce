@@ -8,15 +8,29 @@
                         <form id="signup-form" class="col s12">
                             <div class="row">
                                 <div class="input-field col s12">
-                                    <input id="login" name="login" type="text" class="validate">
+                                    <input required id="login" name="login" type="text" class="validate">
                                     <label for="login">Login</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
-                                    <input id="password" name="password" type="text" class="validate">
-                                    <label for="password">Password</label>
+                                    <input required id="password" name="password" type="text" class="validate">
+                                    <label for="password">Password (Chars and/or digits from 8 to 16)</label>
                                 </div>
+                            </div>
+                             <div class="row">
+                                <div class="input-field col s12">
+                                    <input required id="mail" name="mail" type="email" class="validate">
+                                    <label for="mail">mail</label>
+                                </div>
+                            </div>
+                            <div>
+                                 <p>
+                                  <label>
+                                   <input id="subscribe" type="checkbox" class="filled-in" checked="checked" />
+                                   <span>Subscribe to new products</span>
+                                   </label>
+                                 </p>
                             </div>
                             <div class="row">
                                 <button class="btn waves-effect waves-light" type="submit" name="action">
@@ -35,6 +49,22 @@
     app.handler(function () {
 
         return function () {
+            //Когда контроллер сработал,
+            //готовим шаблон
+            var passwordRegex = /^[A-zА-я0-9]{8,16}$/;
+            //убираем старый обработчик с поля ввода "пароль"
+            $("#signup-form #password").unbind("blur");
+            //привязываем новый обработчик события "утрата фокуса"
+            $("#signup-form #password").blur(function () {
+                //если строка соответствует шаблону
+                if ($("#signup-form #password").val().match(passwordRegex)) {
+                    //меняем значение атрибута класс на valid
+                    $("#signup-form #password").attr('class', 'validate valid');
+                } else {
+                    //иначе - меняем значение атрибута класс на invalid
+                    $("#signup-form #password").attr('class', 'validate invalid');
+                }
+            });
 
             $('#signup-form').unbind("submit");
             $('#signup-form').submit(function (ev) {
@@ -42,32 +72,38 @@
                 ev.preventDefault();
                 var formData = {
                     name : $("#signup-form #login").val(),
-                    password :  $("#signup-form #password").val()
+                    password : $("#signup-form #password").val(),
+                    mail : $("#signup-form #mail").val(),
+                    subscribe: ($("#signup-form #subscribe").is(':checked'))
                 };
-                //
-                $.ajax({
-                    url: "api/user/create"
-                    , data: JSON.stringify(formData)
-                    , type: "POST"
-                    , dataType : "json"
-                    , contentType : "application/json"
-                }).done(function (resp) {
+                // check password field by regexp
+                if (formData.password.match(passwordRegex)) {
+                    $.ajax({
+                        url: "api/user/create"
+                        , data: JSON.stringify(formData)
+                        , type: "POST"
+                        , dataType : "json"
+                        , contentType : "application/json"
+                    }).done(function (resp) {
 
                     if (resp && resp.status && resp.status === "created") {
 
                         $("#signup-form")[0].reset();
-                        window.location = "#!signin";
-                    } else {
+                            window.location = "#!signin";
+                        } else {
 
-                        if (resp && resp.status) {
+                            if (resp && resp.status) {
 
-                            alert("Error: " + resp.message);
+                                alert("Error: " + resp.message);
+                            }
                         }
-                    }
-                }).fail(function () {
+                    }).fail(function () {
 
-                    alert("Fatal error");
-                });
+                        alert("Fatal error");
+                    });
+                } else {
+                    $("#signup-form #password").attr('class', 'validate invalid');
+                }
             });
             setTimeout(preloaderHide, 500);
         };

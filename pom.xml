@@ -93,7 +93,13 @@
                     <version>1.16.20</version>
                     <scope>provided</scope>
                 </dependency>
-	</dependencies>
+<!--        <dependency>
+            <groupId>io.svc</groupId>
+            <artifactId>io-svc-security_2.9.1</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>-->
+    </dependencies>
 
 
     <build>

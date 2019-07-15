@@ -1,20 +1,19 @@
 <!-- Home page -->
-<div class="valign-wrapper">
-<div class="center-align"><h1>Feedback</h1>
-    <br> <br> <br>
-    <form id="feedback-form" class="col s3">
-
-        <p>
-            <textarea name="Feedback" cols="100" rows="10"></textarea>
-        </p>
-        <br> <br>                             
-        <button class="btn waves-effect waves-light" type="submit" name="action">
-            Send
-            <i class="material-icons right">send</i>
-        </button>
-
-    </form>
-</div>
+<div class="row">
+    <div class="col s8 offset-s2">
+        <div class="valign-wrapper">
+            <h1>Feedback</h1>
+            <form id="feedback-form" class="col s3">
+                <p>
+                    <textarea name="Feedback" cols="100" rows="10"></textarea>
+                </p>                            
+                <button class="btn waves-effect waves-light" type="submit" name="action">
+                    Send
+                    <i class="material-icons right">send</i>
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 <div id="feedback-root"></div>
 <script>
@@ -69,24 +68,39 @@
 
                     preloaderHide();
                 });
-            }
+            };
 
             populateFeedbackList();
         
-        /*$('#feedback-form').unbind("submit");
-        $('#feedback-form').submit(function (ev) {
 
-            ev.preventDefault();
-            $.ajax({
-                url: "/create"
-                    //, data: JSON.stringify(formData)
-                    , data: $("#feedback-form").serialize()
-                    , type: 'POST'
+                    $('#feedback-form button[type=submit]').unbind("click");
+                    $('#feedback-form button[type=submit]').click(
+        function (ev) {
+
+                            ev.preventDefault();
+                            var currentdate = new Date();
+                            
+                    var datetime =
+                            currentdate.getFullYear() + "-"
+                            + (parseInt(currentdate.getMonth()) + 1) + "-"
+                            + currentdate.getDate();
+                            $.ajax({
+                                url: "api/feedback/create"
+                                , data: JSON.stringify({
+                                	'text' : $('#feedback-form  textarea').val(),
+                                         'datestime' :  datetime
+                                	})
+                                , type: 'POST'
+                               	, dataType : "json"
+                                , contentType : "application/json"
+
+ 
+           
             }).done(function (resp, statusText, xhr){
-                
+                populateFeedbackList();
             });
             setTimeout(preloaderHide, 500);
-    });*/
-}
+    });
+};
 });
 </script>

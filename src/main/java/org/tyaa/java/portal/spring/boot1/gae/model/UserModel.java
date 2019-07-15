@@ -22,17 +22,34 @@ public class UserModel {
     public String name;
     public String password;
     public RoleModel role;
+    public String mail;
+    public Boolean subscribe;
 
-    public UserModel(String name, String password, RoleModel role) {
-        this.name = name;
-        this.password = password;
-        this.role = role;
-    }
-
-    public UserModel(Long id, String name, String password, RoleModel role) {
+    public UserModel(Long id, String name, String password, RoleModel role, String mail, Boolean subscribe) {
         this.id = id;
         this.name = name;
         this.password = password;
+        this.mail = mail;
+        this.role = role;
+        this.subscribe = subscribe;
+    }
+
+    public UserModel(String name, String password, String mail ,RoleModel role) {
+        this.name = name;
+        this.password = password;
+        this.mail = mail;
         this.role = role;
     }
+
+    public UserModel(Long id, String name, String password, String mail, RoleModel role) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.mail = mail;
+        this.role = role;
+    }
+
+    public UserModel(Long id, String name) {
+        this.id = id;
+        this.name = name;    }
 }

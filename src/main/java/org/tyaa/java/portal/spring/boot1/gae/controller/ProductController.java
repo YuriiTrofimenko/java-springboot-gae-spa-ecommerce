@@ -21,6 +21,7 @@ import org.tyaa.java.portal.spring.boot1.gae.model.Cart;
 import org.tyaa.java.portal.spring.boot1.gae.model.CartItem;
 import org.tyaa.java.portal.spring.boot1.gae.model.ProductFilter;
 import org.tyaa.java.portal.spring.boot1.gae.model.ProductModel;
+import org.tyaa.java.portal.spring.boot1.gae.model.SubscriptionModel;
 import org.tyaa.java.portal.spring.boot1.gae.service.ProductService;
 
 /**
@@ -33,6 +34,7 @@ public class ProductController {
     
     @Autowired
     private ProductService productService;
+   // private ProductService subscriptionService;
 
     @GetMapping("")
     public JsonHttpResponse getAll() {
